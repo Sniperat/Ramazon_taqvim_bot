@@ -94,13 +94,12 @@ class Command(BotBase):
                 reg.reg_xufton = removeSecs(xufton, timeseconds)
             reg.save()
 
-
-
+        # if datetime.datetime.now().time() == datetime.timedelta(hours=17, minutes=40):
         for row in User.objects.all():
             try:
                 self.updater.bot.send_message(
                     chat_id=row.telegram_user_id,
-                    text="hello"
+                    text='hello mf'
                 )
             except Exception as e:
                 self.updater.bot.send_message(

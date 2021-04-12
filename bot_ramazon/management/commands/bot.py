@@ -87,26 +87,18 @@ class Command(BotBase):
         query.edit_message_text(text='Manzilni tanlash', reply_markup=reply_markup)
 
     def asd(self, update: Update, context: CallbackContext) -> None:
-        namaz = Namoz.objects.get(id=1)
         user = user_func(update)
-        region = Region.objects.all()
         query = update.callback_query
         query.answer()
-
-
-
         keyboard = [
             [
                 InlineKeyboardButton('nazad', callback_data='back')
             ]
         ]
-        userTime = user.region_ID.time
-        minute = str(userTime)[3:-3]
-        seconde = str(userTime)[6:]
-        timeseconds = int(minute) * 60 + int(seconde)
+
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(text="🏙saharlik vaqti: {}\n🌄Iftorlik vaqti: {}\n{} vaqti bilan kamida {} daqiqa qo'shiladi".format(addSecs(namaz.bamdod,timeseconds),
-                                                                                                                        addSecs(namaz.shom, timeseconds),
+        query.edit_message_text(text="🏙saharlik vaqti: {}\n🌄Iftorlik vaqti: {}\n{} vaqti bilan kamida {} daqiqa qo'shilgan".format(user.region_ID.reg_bamdod,
+                                                                                                                        user.region_ID.reg_shom ,
                                                                                                                         user.region_ID.name,
                                                                                                                         user.region_ID.time), reply_markup=reply_markup)
 
@@ -136,7 +128,7 @@ class Command(BotBase):
                         InlineKeyboardButton("iftorlik vaqti", callback_data='asd')
                     ],
                     [
-                        InlineKeyboardButton("Ogohlantirishlarni yoqish", callback_data='notification')
+                        InlineKeyboardButton("Ogohlantirishlarni yoqish", callback_data='notifi')
                     ],
                     [
                         InlineKeyboardButton("Duolar", callback_data='duo')
@@ -163,18 +155,15 @@ class Command(BotBase):
             keyboard = [
                 [
                     InlineKeyboardButton(f"Bomdod {'❌' if user.note_babdod == 0 else '✅'}",
-                                         callback_data='notification1')
-                ],
-                [
+                                         callback_data='notification1'),
                     InlineKeyboardButton(f"Peshin {'❌' if user.note_peshin == 0 else '✅'}",
                                          callback_data='notification2')
                 ],
                 [
-                    InlineKeyboardButton(f"Asr {'❌' if user.note_asr == 0 else '✅'}", callback_data='notification3')
-                ],
-                [
+                    InlineKeyboardButton(f"Asr {'❌' if user.note_asr == 0 else '✅'}", callback_data='notification3'),
                     InlineKeyboardButton(f"Shom {'❌' if user.note_shom == 0 else '✅'}", callback_data='notification4')
                 ],
+
                 [
                     InlineKeyboardButton(f"Xufton {'❌' if user.note_xufton == 0 else '✅'}",
                                          callback_data='notification5')
@@ -188,6 +177,18 @@ class Command(BotBase):
             reply_markup = InlineKeyboardMarkup(keyboard)
             query.edit_message_text(text='Siz buyerda namoz vaqtlarini kelganda eslatib turish funksiyasini'
                                          'yoqishingiz mumkun', reply_markup=reply_markup)
+        if query.data[:6] == 'rememb':
+            num = int(query.data[7:])
+            if num == 1:
+                user.note_time = 10
+            if num == 5:
+                user.note_time = 5
+            if num == 0:
+                user.note_time = 0
+            if num == 2:
+                user.note_time = 20
+            user.save()
+            self.notifi(update, context)
 
 
     def back(self, update: Update, context: CallbackContext) -> None:
@@ -204,7 +205,7 @@ class Command(BotBase):
                 InlineKeyboardButton("iftorlik vaqti", callback_data='asd')
             ],
             [
-                InlineKeyboardButton("Ogohlantirishlarni yoqish", callback_data='notification')
+                InlineKeyboardButton("Ogohlantirishlarni yoqish", callback_data='notifi')
             ],
             [
                 InlineKeyboardButton("Duolar", callback_data='duo')
@@ -215,31 +216,19 @@ class Command(BotBase):
 
     def times(self, update: Update, context: CallbackContext) -> None:
         user = user_func(update)
-        namoz = Namoz.objects.get(id=1)
         query = update.callback_query
-
-
-        userTime = user.region_ID.time
-        minute = str(userTime)[3:-3]
-        seconde = str(userTime)[6:]
-        timeseconds = int(minute)*60 + int(seconde)
-
         query.answer()
-
-        # print(namoz.bamdod + datetime.timedelta(seconds=int(seconde), minutes=int(minute)) )
-
-
         keyboard = [
             [
                 InlineKeyboardButton("Back", callback_data='back')
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(text=f'Bamdod  {addSecs(namoz.bamdod, timeseconds)}\n'
-                                     f'Peshin  {addSecs(namoz.peshin, timeseconds)}\n'
-                                     f'Asr-----{addSecs(namoz.asr, timeseconds)}\n'
-                                     f'Shom    {addSecs(namoz.shom, timeseconds)}\n'
-                                     f'Xufton  {addSecs(namoz.xufton, timeseconds)}', reply_markup=reply_markup)
+        query.edit_message_text(text=f'Bamdod  {user.region_ID.reg_bamdod}\n'
+                                     f'Peshin  {user.region_ID.reg_peshin}\n'
+                                     f'Asr-----{user.region_ID.reg_asr}\n'
+                                     f'Shom    {user.region_ID.reg_shom}\n'
+                                     f'Xufton  {user.region_ID.reg_xufton}', reply_markup=reply_markup)
 
     def duo(self, update: Update, context: CallbackContext) -> None:
         duo = Duolar.objects.all()
@@ -276,6 +265,53 @@ class Command(BotBase):
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(text='Duolar', reply_markup=reply_markup)
 
+    def notifi(self, update: Update, context: CallbackContext) -> None:
+        duo = Duolar.objects.all()
+        user = user_func(update)
+
+        namoz = Namoz.objects.get(id=1)
+        query = update.callback_query
+        query.answer()
+        id = query.data[2:]
+
+
+        keyboard = [
+            [
+                InlineKeyboardButton('notification', callback_data='notification')
+            ],
+            [
+                InlineKeyboardButton(user.note_time+' daqiqa oldin eslat', callback_data='remember')
+            ],
+            [
+                InlineKeyboardButton('ortga', callback_data='back')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        query.edit_message_text(text='Duolar', reply_markup=reply_markup)
+
+    def remember(self, update: Update, context: CallbackContext) -> None:
+        duo = Duolar.objects.all()
+        user = user_func(update)
+
+        namoz = Namoz.objects.get(id=1)
+        query = update.callback_query
+        query.answer()
+        id = query.data[2:]
+
+
+        keyboard = [
+            [
+                InlineKeyboardButton('0', callback_data='rememb-0'),
+                InlineKeyboardButton('5', callback_data='rememb-5')
+            ],
+            [
+                InlineKeyboardButton(' 10', callback_data='rememb-1'),
+                InlineKeyboardButton(' 20', callback_data='rememb-2')
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        query.edit_message_text(text='Duolar', reply_markup=reply_markup)
+
     def notification(self, update: Update, context: CallbackContext) -> None:
         duo = Duolar.objects.all()
         user = user_func(update)
@@ -287,15 +323,11 @@ class Command(BotBase):
 
         keyboard = [
             [
-                InlineKeyboardButton(f"Bomdod {'❌' if user.note_babdod == 0 else '✅'}", callback_data='notification1')
-            ],
-            [
+                InlineKeyboardButton(f"Bomdod {'❌' if user.note_babdod == 0 else '✅'}", callback_data='notification1'),
                 InlineKeyboardButton(f"Peshin {'❌' if user.note_peshin == 0 else '✅'}", callback_data='notification2')
             ],
             [
-                InlineKeyboardButton(f"Asr {'❌' if user.note_asr == 0 else '✅'}", callback_data='notification3')
-            ],
-            [
+                InlineKeyboardButton(f"Asr {'❌' if user.note_asr == 0 else '✅'}", callback_data='notification3'),
                 InlineKeyboardButton(f"Shom {'❌' if user.note_shom == 0 else '✅'}", callback_data='notification4')
             ],
             [
@@ -316,6 +348,7 @@ class Command(BotBase):
         dispatcher = self.updater.dispatcher
 
         # dispatcher.add_handler(CallbackQueryHandler(self.days2, pattern="^(\d{4}\-\d{2}\-\d{2})$"))
+        dispatcher.add_handler(CallbackQueryHandler(self.remember, pattern="^(\{6}\-\d{1})$"))
 
         # dispatcher.add_handler(CallbackQueryHandler(self.main_me, pattern="^(main)$"))
         dispatcher.add_handler(CallbackQueryHandler(self.region, pattern=f"^(sta)$"))
@@ -324,6 +357,8 @@ class Command(BotBase):
         dispatcher.add_handler(CallbackQueryHandler(self.times, pattern="^(times)$"))
         dispatcher.add_handler(CallbackQueryHandler(self.duo, pattern="^(duo)$"))
         dispatcher.add_handler(CallbackQueryHandler(self.notification, pattern="^(notification)$"))
+        dispatcher.add_handler(CallbackQueryHandler(self.notifi, pattern="^(notifi)$"))
+        dispatcher.add_handler(CallbackQueryHandler(self.remember, pattern="^(remember)$"))
         dispatcher.add_handler(CommandHandler('start', self.start))
         dispatcher.add_handler(CallbackQueryHandler(self.button))
 
