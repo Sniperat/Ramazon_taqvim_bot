@@ -8,14 +8,8 @@ from ...models import Region, Namoz, Duolar
 from bs4 import BeautifulSoup
 
 
-# api = 'https://api.aladhan.com/timingsByAddress?address=Tashkent,%20UK&method=99&methodSettings=18.5,null,17.5'
-# response = requests.get(api)
-# time = response.json()
 page = requests.get('https://islam.uz/')
-# print(page.content)
 soup = BeautifulSoup(page.content, 'html.parser')
-# print(soup.prettify())
-# print([type(item) for item in list(soup.children)])
 html = list(soup.children)[0]
 body = list(html.children)[3]
 mody = list(body.children)[1]
@@ -27,7 +21,6 @@ dsadsa = list(endd.children)[1]
 misa = list(dsadsa.children)[1]
 final = misa.get_text()
 array = final.split('\n')
-# print(list(body.children))
 newList = []
 for i in array:
     if i == '':
@@ -51,19 +44,19 @@ namoz.xufton = datetime.time(int(newList[18][:2]), int(newList[18][3:]))
 #               xufton=datetime.time(int(newList[18][:2]), int(newList[18][3:]))
 #               )
 namoz.save()
-# html = list(soup.children)[1]
-# body = list(html.children)[2]
-# p = list(body.children)[3]
-# print(p.get_text())
-# print(time)
-# vaqt = time['data']['timings']
-# kun = time['data']['date']['readable']
-# print(vaqt)
+
+
+
+def addSecs(tm, secs):
+    fulldate = datetime.datetime(100, 1, 1, tm.hour, tm.minute, tm.second)
+    fulldate = fulldate + datetime.timedelta(seconds=secs)
+    return fulldate.time()
 
 
 class Command(BotBase):
 
     def start(self, update: Update, context: CallbackContext) -> None:
+        print(update.message.chat_id)
         user = user_func(update)
 
         keyboard = [
@@ -107,10 +100,13 @@ class Command(BotBase):
                 InlineKeyboardButton('nazad', callback_data='back')
             ]
         ]
-
+        userTime = user.region_ID.time
+        minute = str(userTime)[3:-3]
+        seconde = str(userTime)[6:]
+        timeseconds = int(minute) * 60 + int(seconde)
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(text="🏙saharlik vaqti: {}\n🌄Iftorlik vaqti: {}\n{} vaqti bilan kamida {} daqiqa qo'shiladi".format(namaz.bamdod,
-                                                                                                                        namaz.shom,
+        query.edit_message_text(text="🏙saharlik vaqti: {}\n🌄Iftorlik vaqti: {}\n{} vaqti bilan kamida {} daqiqa qo'shiladi".format(addSecs(namaz.bamdod,timeseconds),
+                                                                                                                        addSecs(namaz.shom, timeseconds),
                                                                                                                         user.region_ID.name,
                                                                                                                         user.region_ID.time), reply_markup=reply_markup)
 
@@ -221,7 +217,17 @@ class Command(BotBase):
         user = user_func(update)
         namoz = Namoz.objects.get(id=1)
         query = update.callback_query
+
+
+        userTime = user.region_ID.time
+        minute = str(userTime)[3:-3]
+        seconde = str(userTime)[6:]
+        timeseconds = int(minute)*60 + int(seconde)
+
         query.answer()
+
+        # print(namoz.bamdod + datetime.timedelta(seconds=int(seconde), minutes=int(minute)) )
+
 
         keyboard = [
             [
@@ -229,11 +235,11 @@ class Command(BotBase):
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(text=f'Bamdod  {namoz.bamdod}\n'
-                                     f'Peshin  {namoz.peshin}\n'
-                                     f'Asr-----{namoz.asr}\n'
-                                     f'Shom    {namoz.shom}\n'
-                                     f'Xufton  {namoz.xufton}', reply_markup=reply_markup)
+        query.edit_message_text(text=f'Bamdod  {addSecs(namoz.bamdod, timeseconds)}\n'
+                                     f'Peshin  {addSecs(namoz.peshin, timeseconds)}\n'
+                                     f'Asr-----{addSecs(namoz.asr, timeseconds)}\n'
+                                     f'Shom    {addSecs(namoz.shom, timeseconds)}\n'
+                                     f'Xufton  {addSecs(namoz.xufton, timeseconds)}', reply_markup=reply_markup)
 
     def duo(self, update: Update, context: CallbackContext) -> None:
         duo = Duolar.objects.all()

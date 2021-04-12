@@ -4,6 +4,13 @@ from django.db import models
 class Region(models.Model):
     name = models.CharField(max_length=50)
     time = models.TimeField(auto_now=False)
+    is_plus = models.SmallIntegerField(default=0)
+    reg_bamdod = models.TimeField(auto_now=False, null=True)
+    reg_tong = models.TimeField(auto_now=False, null=True)
+    reg_peshin = models.TimeField(auto_now=False, null=True)
+    reg_asr = models.TimeField(auto_now=False, null=True)
+    reg_shom = models.TimeField(auto_now=False, null=True)
+    reg_xufton = models.TimeField(auto_now=False, null=True)
 
 
 class User(models.Model):
