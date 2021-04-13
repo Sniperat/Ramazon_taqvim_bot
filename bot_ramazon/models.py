@@ -18,7 +18,7 @@ class User(models.Model):
     user_name = models.CharField(max_length=50, default=None, null=True)
     note_time = models.CharField(max_length=5, default=0)
     region_ID = models.ForeignKey(Region, on_delete=models.CASCADE, null=True, default=None)
-    note_babdod = models.SmallIntegerField(default=0)
+    note_bamdod = models.SmallIntegerField(default=0)
     note_tong = models.SmallIntegerField(default=0)
     note_peshin = models.SmallIntegerField(default=0)
     note_asr = models.SmallIntegerField(default=0)

@@ -4,7 +4,7 @@ from ._base import BotBase
 import json, requests
 import datetime
 from ...functions import user_func, notification_change
-from ...models import Region, Namoz, Duolar
+from ...models import Region, Namoz, Duolar, User
 from bs4 import BeautifulSoup
 
 
@@ -56,7 +56,6 @@ def addSecs(tm, secs):
 class Command(BotBase):
 
     def start(self, update: Update, context: CallbackContext) -> None:
-        print(update.message.chat_id)
         user = user_func(update)
 
         keyboard = [
@@ -154,7 +153,7 @@ class Command(BotBase):
 
             keyboard = [
                 [
-                    InlineKeyboardButton(f"Bomdod {'❌' if user.note_babdod == 0 else '✅'}",
+                    InlineKeyboardButton(f"Bomdod {'❌' if user.note_bamdod == 0 else '✅'}",
                                          callback_data='notification1'),
                     InlineKeyboardButton(f"Peshin {'❌' if user.note_peshin == 0 else '✅'}",
                                          callback_data='notification2')
@@ -283,8 +282,12 @@ class Command(BotBase):
                 InlineKeyboardButton(user.note_time+' daqiqa oldin eslat', callback_data='remember')
             ],
             [
+                InlineKeyboardButton("manzilni o'zgartirish", callback_data='sta')
+            ],
+            [
                 InlineKeyboardButton('ortga', callback_data='back')
             ]
+
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(text='Duolar', reply_markup=reply_markup)
@@ -323,7 +326,7 @@ class Command(BotBase):
 
         keyboard = [
             [
-                InlineKeyboardButton(f"Bomdod {'❌' if user.note_babdod == 0 else '✅'}", callback_data='notification1'),
+                InlineKeyboardButton(f"Bomdod {'❌' if user.note_bamdod == 0 else '✅'}", callback_data='notification1'),
                 InlineKeyboardButton(f"Peshin {'❌' if user.note_peshin == 0 else '✅'}", callback_data='notification2')
             ],
             [
@@ -344,6 +347,12 @@ class Command(BotBase):
         query.edit_message_text(text='Siz buyerda namoz vaqtlarini kelganda eslatib turish funksiyasini'
                                      'yoqishingiz mumkun', reply_markup=reply_markup)
 
+    def delete(self, update: Update, context: CallbackContext) -> None:
+        query = update.callback_query
+        query.answer()
+        query.delete_message()
+
+
     def handle(self, *args, **kwargs):
         dispatcher = self.updater.dispatcher
 
@@ -359,6 +368,7 @@ class Command(BotBase):
         dispatcher.add_handler(CallbackQueryHandler(self.notification, pattern="^(notification)$"))
         dispatcher.add_handler(CallbackQueryHandler(self.notifi, pattern="^(notifi)$"))
         dispatcher.add_handler(CallbackQueryHandler(self.remember, pattern="^(remember)$"))
+        dispatcher.add_handler(CallbackQueryHandler(self.delete, pattern="^(delete)$"))
         dispatcher.add_handler(CommandHandler('start', self.start))
         dispatcher.add_handler(CallbackQueryHandler(self.button))
 
