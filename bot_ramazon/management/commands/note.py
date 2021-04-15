@@ -25,7 +25,9 @@ class Command(BotBase):
         main_hour = datetime.datetime.now().time().hour
         main_minut = datetime.datetime.now().time().minute
         regions = Region.objects.all()
-        if datetime.timedelta(hours=main_hour, minutes=main_minut) == datetime.timedelta(hours=1, minutes=00):
+        if datetime.timedelta(hours=main_hour, minutes=main_minut) == (datetime.timedelta(hours=0, minutes=1) or
+                                                                       datetime.timedelta(hours=0, minutes=5) or
+                                                                       datetime.timedelta(hours=0, minutes=30)):
             page = requests.get('https://islam.uz/')
             soup = BeautifulSoup(page.content, 'html.parser')
             html = list(soup.children)[0]
@@ -81,9 +83,9 @@ class Command(BotBase):
 
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        for i in regions:
+        for u in regions:
             # todo Bamdod vaqtlari
-            redate = removeSecs(i.reg_bamdod, 20 * 60)
+            redate = removeSecs(u.reg_bamdod, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -91,19 +93,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_bamdod=1, note_time=20)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Bamdod namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Бомдод вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
 
-
-            redate = removeSecs(i.reg_bamdod, 10 * 60)
+            redate = removeSecs(u.reg_bamdod, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -111,17 +111,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_bamdod=1, note_time=10)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Bamdod namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_bamdod, 5 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Бомдод вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_bamdod, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -129,63 +129,63 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_bamdod=1, note_time=5)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Bamdod namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            hour = i.reg_bamdod.hour
-            minut = i.reg_bamdod.minute
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Бомдод вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            hour = u.reg_bamdod.hour
+            minut = u.reg_bamdod.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 users = User.objects.filter(note_bamdod=1, note_time=0)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Bamdod namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Бомдод вақти бўлди',
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
             # todo Tong vaqtlari
-            redate = removeSecs(i.reg_tong, 20 * 60)
+            redate = removeSecs(u.reg_tong, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 pass
-            redate = removeSecs(i.reg_tong, 10 * 60)
+            redate = removeSecs(u.reg_tong, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 pass
-            redate = removeSecs(i.reg_tong, 5 * 60)
+            redate = removeSecs(u.reg_tong, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 pass
-            hour = i.reg_tong.hour
-            minut = i.reg_tong.minute
+            hour = u.reg_tong.hour
+            minut = u.reg_tong.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 pass
             # todo Peshin vaqtlari
-            redate = removeSecs(i.reg_peshin, 20 * 60)
+            redate = removeSecs(u.reg_peshin, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -193,17 +193,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.get(note_peshin=1, note_time=20)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Peshin namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_peshin, 10 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Пешин вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_peshin, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -211,17 +211,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_peshin=1, note_time=10)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Peshin namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_peshin, 5 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Пешин вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_peshin, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -229,35 +229,35 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_peshin=1, note_time=5)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Peshin namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            hour = i.reg_peshin.hour
-            minut = i.reg_peshin.minute
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Пешин вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            hour = u.reg_peshin.hour
+            minut = u.reg_peshin.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 users = User.objects.filter(note_peshin=1, note_time=0)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Peshin namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Пешин вақти бўлди',
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
             # todo Asr vaqtlari
-            redate = removeSecs(i.reg_asr, 20 * 60)
+            redate = removeSecs(u.reg_asr, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -265,17 +265,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_asr=1, note_time=20)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Asr namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_asr, 10 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Аср вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_asr, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -283,17 +283,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_asr=1, note_time=10)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Asr namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_asr, 5 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Аср вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_asr, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -302,36 +302,35 @@ class Command(BotBase):
 
                 users = User.objects.filter(note_asr=1, note_time=5)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Asr namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            hour = i.reg_asr.hour
-            minut = i.reg_asr.minute
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Аср вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            hour = u.reg_asr.hour
+            minut = u.reg_asr.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 users = User.objects.filter(note_asr=1, note_time=0)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Asr namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Аср вақти бўлди',
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
 
             # todo Shom vaqtlari
-            redate = removeSecs(i.reg_shom, 20 * 60)
+            redate = removeSecs(u.reg_shom, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -339,17 +338,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_shom=1, note_time=20)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Shom namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_shom, 10 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Шом вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_shom, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -357,17 +356,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_shom=1, note_time=10)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Shom namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_shom, 5 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Шом вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_shom, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -375,36 +374,35 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_shom=1, note_time=5)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Shom namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            hour = i.reg_shom.hour
-            minut = i.reg_shom.minute
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Шом вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            hour = u.reg_shom.hour
+            minut = u.reg_shom.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 users = User.objects.filter(note_shom=1, note_time=0)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Shom namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Шом вақти бўлди',
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
 
             # todo Xufton vaqtlari
-            redate = removeSecs(i.reg_xufton, 20 * 60)
+            redate = removeSecs(u.reg_xufton, 20 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -412,17 +410,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_xufton=1, note_time=20)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Xufton namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_xufton, 10 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Хуфтон вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_xufton, 10 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -430,17 +428,17 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_xufton=1, note_time=10)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Xufton namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            redate = removeSecs(i.reg_xufton, 5 * 60)
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Хуфтон вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            redate = removeSecs(u.reg_xufton, 5 * 60)
             hour = redate.hour
             minut = redate.minute
             if datetime.timedelta(hours=main_hour,
@@ -448,30 +446,29 @@ class Command(BotBase):
                                                                             minutes=minut):
                 users = User.objects.filter(note_xufton=1, note_time=5)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Xufton namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
-            hour = i.reg_xufton.hour
-            minut = i.reg_xufton.minute
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Хуфтон вақтига {} дақиқа қолди'.format(i.note_time),
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()
+
+            hour = u.reg_xufton.hour
+            minut = u.reg_xufton.minute
             if datetime.timedelta(hours=main_hour,
                                   minutes=main_minut) == datetime.timedelta(hours=hour,
                                                                             minutes=minut):
                 users = User.objects.filter(note_xufton=1, note_time=0)
                 for i in users:
-                    try:
-                        self.updater.bot.send_message(
-                            chat_id=i.telegram_user_id,
-                            text='Xufton namoziga {} daqiqa vaqt qoldi'.format(i.note_time),
-                            reply_markup=reply_markup)
-                    except Exception as e:
-                        self.updater.bot.send_message(
-                            chat_id=920393608,
-                            text="TID: {}, user:{},\n\n{}".format(i.telegram_user_id, i.user_name, str(e))
-                        )
+                    if i.region_ID == u:
+                        try:
+                            self.updater.bot.send_message(
+                                chat_id=i.telegram_user_id,
+                                text='Ассаламуалайкум ва роҳматуллоҳу ва баракату! \n\n'
+                                     'Хуфтон вақти бўлди',
+                                reply_markup=reply_markup)
+                        except Exception as e:
+                            i.delete()

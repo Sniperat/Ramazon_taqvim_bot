@@ -7,4 +7,4 @@ class BotBase(BaseCommand):
         super(BotBase, self).__init__(*args, **kwargs)
 
 
-        self.updater = Updater("987901929:AAGXNZRYYet3z_fqYRNbjilLsPJHZJwBHbg")
+        self.updater = Updater("1776123695:AAEL6j47PcQWE60bIQw2znNWtfc2cYKdOuw")
